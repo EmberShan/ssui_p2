@@ -228,12 +228,9 @@ export class DrawnObjectBase {
     get visible() { return this._visible; }
     set visible(v) {
         //=== YOUR CODE HERE ===
-        if (v != this._visible) {
+        if (v !== this._visible) {
             this._visible = v;
-            if (this._visible) {
-                this.damageAll();
-            }
-            ;
+            this.damageAll();
         }
     }
     get parent() { return this._parent; }
@@ -477,10 +474,10 @@ export class DrawnObjectBase {
         //=== YOUR CODE HERE ===
         // use the index to find the current child then do translation 
         // then apply clipping 
+        ctx.beginPath();
         let current = this._children[childIndx];
         ctx.translate(this.x + current.x, this.y + current.y);
         this.applyClip(ctx, current.x, current.y, current.w, current.h);
-        // current.draw(ctx); 
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Internal method to restore the given drawing context after drawing the 
@@ -508,6 +505,7 @@ export class DrawnObjectBase {
             // exception to be propagated out, but will force the call to _endChildDraw() 
             // before we leave this function.
             try {
+                console.log('children is being drawn', this.children[ch]);
                 this.children[ch].draw(ctx);
             }
             finally {
@@ -598,8 +596,10 @@ export class DrawnObjectBase {
         // resolved at the top of the tree 
         if (this.parent) {
             // if it's not the top object 
+            if (this.parent === this._findTop()) {
+                console.log('reached the topobject');
+            }
             this.parent._damageFromChild(this, xv, yv, wv, hv);
-            this.addChild(this);
         }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -619,9 +619,10 @@ export class DrawnObjectBase {
     _damageFromChild(child, xInChildCoords, yInChildCoords, wv, hv) {
         //=== YOUR CODE HERE ===
         if (this.parent) {
+            // if(this.parent === this._findTop()) {console.log('reached the topobject')}
             // change to parent's coordinates 
             let p = this.parent;
-            p._damageFromChild(this, p.x + xInChildCoords, p.y + yInChildCoords, wv, hv);
+            p._damageFromChild(this, this.x + xInChildCoords, this.y + yInChildCoords, wv, hv);
         }
     }
     get debugID() { return this._debugID; }

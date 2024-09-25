@@ -98,7 +98,8 @@ export class TopObject extends DrawnObjectBase {
     // For this object we clear the canvas behind the children that we draw
     protected override _drawSelfOnly(ctx: CanvasRenderingContext2D): void {
         //=== YOUR CODE HERE ===
-        this.canvasContext.clearRect(this.x, this.y, this.w, this.h); 
+        // console.log('cleared rect')
+        // this.canvasContext.clearRect(this.x, this.y, this.w, this.h); 
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -164,7 +165,7 @@ export class TopObject extends DrawnObjectBase {
                 
                 //=== YOUR CODE HERE ===
                 // clip to the damaged area 
-                this.applyClip(this._canvasContext, this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH)
+                // this.applyClip(this._canvasContext, this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH)
 
                 // after this we will no longer be damaged, so reset our damage tracking
                 // rectangle to be our whole bounds
@@ -175,7 +176,7 @@ export class TopObject extends DrawnObjectBase {
                 // do the actual drawing from here down the tree
                 
                 //=== YOUR CODE HERE ===
-                // call from base class to draw all the damaged children 
+                // call from base class to draw children 
                 console.log('drawing the children'); 
                 // this._drawChildren(this._canvasContext); 
                 this.draw(this._canvasContext); 

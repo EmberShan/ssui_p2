@@ -70,7 +70,8 @@ export class TopObject extends DrawnObjectBase {
     // For this object we clear the canvas behind the children that we draw
     _drawSelfOnly(ctx) {
         //=== YOUR CODE HERE ===
-        this.canvasContext.clearRect(this.x, this.y, this.w, this.h);
+        // console.log('cleared rect')
+        // this.canvasContext.clearRect(this.x, this.y, this.w, this.h); 
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Override the _findTop() method so to returns this object as the top we have been
@@ -123,7 +124,7 @@ export class TopObject extends DrawnObjectBase {
                 // within our bounds clip to just the damaged region
                 //=== YOUR CODE HERE ===
                 // clip to the damaged area 
-                this.applyClip(this._canvasContext, this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH);
+                // this.applyClip(this._canvasContext, this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH)
                 // after this we will no longer be damaged, so reset our damage tracking
                 // rectangle to be our whole bounds
                 this._damageRectX = this._damageRectY = 0;
@@ -131,7 +132,7 @@ export class TopObject extends DrawnObjectBase {
                 this._damageRectH = this.h;
                 // do the actual drawing from here down the tree
                 //=== YOUR CODE HERE ===
-                // call from base class to draw all the damaged children 
+                // call from base class to draw children 
                 console.log('drawing the children');
                 // this._drawChildren(this._canvasContext); 
                 this.draw(this._canvasContext);
