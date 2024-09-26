@@ -65,9 +65,9 @@ export class FilledObject extends DrawnObjectBase {
         }
         //=== YOUR CODE HERE ===
         ctx.save();
+        // drawing the rectangle here 
         ctx.beginPath();
         ctx.rect(this.x, this.y, this.w, this.h);
-        console.log('drawing a filled object here', this.x, this.y, this.w, this.h);
         ctx.fill();
         ctx.restore();
         super._drawSelfOnly(ctx);

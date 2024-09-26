@@ -78,6 +78,14 @@ export class Column extends Group {
     // Our height is set to the height determined by stacking our children vertically.
     _doLocalSizing() {
         //=== YOUR CODE HERE ===
+        // min is sum of mins, natual is sum of naturals, and max is sum of maxes
+        for (let child of this.children) {
+            // height configuration 
+            // this.hConfig.min += child.hConfig.min;
+            // this.hConfig.max += child.hConfig.max;
+            // this.hConfig.nat += child.hConfig.nat;
+            this.hConfig = SizeConfig.add(this.hConfig, child.hConfig);
+        }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // This method adjusts the height of the children to do vertical springs and struts 
@@ -135,6 +143,15 @@ export class Column extends Group {
         let availCompr = 0;
         let numSprings = 0;
         //=== YOUR CODE HERE ===
+        for (let child of this.children) {
+            if (child instanceof Spring) {
+                numSprings++;
+            }
+            else {
+                natSum += child.hConfig.nat;
+                availCompr += child.hConfig.nat - child.hConfig.min;
+            }
+        }
         return [natSum, availCompr, numSprings];
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -144,6 +161,11 @@ export class Column extends Group {
     // the space at the bottom of the column as a fallback strategy).
     _expandChildSprings(excess, numSprings) {
         //=== YOUR CODE HERE ===
+        for (let child of this.children) {
+            if (child instanceof Spring) {
+                child.h = child.hConfig.nat = excess / numSprings; //allocate excess space evenly to each spring 
+            }
+        }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Contract our child objects to make up the given amount of shortfall.  Springs
@@ -160,6 +182,16 @@ export class Column extends Group {
         // from the natural height of that child, to get the assigned height.
         for (let child of this.children) {
             //=== YOUR CODE HERE ===
+            // springs have 0 size so won't contribute to this 
+            if (!(child instanceof Spring)) {
+                // compressability of the child 
+                let c = child.hConfig.nat - child.hConfig.min;
+                if (c === 0)
+                    return; //not compressable 
+                // calcualte the fraction and allocate the available compressable size
+                // and checking if it is within the range 
+                child.h -= SizeConfig.withinConfig(shortfall * (c / availCompr), child.hConfig);
+            }
         }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -198,6 +230,19 @@ export class Column extends Group {
         }
         // apply our justification setting for the horizontal
         //=== YOUR CODE HERE ===
+        for (let ch = 1; ch < this.children.length; ch++) {
+            if (this.wJustification === 'left') {
+                this.children[ch].x = this.children[0].x; // left align with the top element 
+            }
+            else if (this.wJustification === 'center') {
+                // align with the midpoint of the top element 
+                this.children[ch].x = (this.children[0].x + this.children[0].w / 2) - this.children[ch].w / 2;
+            }
+            else if (this.wJustification === 'right') {
+                // align with the rightmost point of the top element 
+                this.children[ch].x = (this.children[0].x + this.children[0].w) - this.children[ch].w;
+            }
+        }
     }
 }
 //===================================================================
@@ -215,6 +260,8 @@ export class Column_debug extends Column {
         ctx.fillRect(0, 0, this.w, this.h);
         ctx.strokeStyle = 'black';
         ctx.strokeRect(0, 0, this.w, this.h);
+        // ctx.fill(); 
+        // ctx.stroke(); 
         super._drawSelfOnly(ctx);
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -225,6 +272,7 @@ export class Column_debug extends Column {
             // also draw an extra box on top of children 
             ctx.strokeStyle = 'black';
             ctx.strokeRect(0, 0, this.w, this.h);
+            console.log('>>>>>>>>>drawing a column debug', this.x, '  ', this.y, '  ', this.w, '  ', this.h);
         }
     }
 } // end of Column_debug class

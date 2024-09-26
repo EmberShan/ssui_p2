@@ -98,8 +98,7 @@ export class TopObject extends DrawnObjectBase {
     // For this object we clear the canvas behind the children that we draw
     protected override _drawSelfOnly(ctx: CanvasRenderingContext2D): void {
         //=== YOUR CODE HERE ===
-        // console.log('cleared rect')
-        // this.canvasContext.clearRect(this.x, this.y, this.w, this.h); 
+        ctx.clearRect(this.x, this.y, this.w, this.h); 
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -159,13 +158,13 @@ export class TopObject extends DrawnObjectBase {
                 
                 //=== YOUR CODE HERE ===
                 // clip to this topobject/parent's bounds using the utility method from parent 
-                this.applyClip(this._canvasContext, this.x, this.y, this.w, this.h)
+                this.applyClip(this.canvasContext, this.x, this.y, this.w, this.h)
 
                 // within our bounds clip to just the damaged region
                 
                 //=== YOUR CODE HERE ===
                 // clip to the damaged area 
-                // this.applyClip(this._canvasContext, this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH)
+                this.applyClip(this.canvasContext, this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH)
 
                 // after this we will no longer be damaged, so reset our damage tracking
                 // rectangle to be our whole bounds
@@ -177,9 +176,7 @@ export class TopObject extends DrawnObjectBase {
                 
                 //=== YOUR CODE HERE ===
                 // call from base class to draw children 
-                console.log('drawing the children'); 
-                // this._drawChildren(this._canvasContext); 
-                this.draw(this._canvasContext); 
+                this.draw(this.canvasContext); 
 
 
             } catch(err) {
@@ -215,7 +212,13 @@ export class TopObject extends DrawnObjectBase {
         //=== YOUR CODE HERE ===
         console.log('damged set to true in topobject')
         this._damaged = true; 
-        this._performLayout(); 
+        // setting the damaged area 
+        this._damageRectX = this.x + xv; 
+        this._damageRectY = this.y + yv; 
+        this._damageRectW = wv; 
+        this._damageRectH = hv; 
+
+        // this.layoutAndDrawAll(); 
     }
     
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  

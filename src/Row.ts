@@ -22,21 +22,21 @@ import { Spring } from "./Spring.js";
 // horizontall.  Vertically they are top, center, or bottom justified
 // (as controlled by the hJustification property of this object).
 //===================================================================
-export class Row extends Group { 
+export class Row extends Group {
 
-    public constructor(  
-        x : number = 0,      // x position in parent coordinate system 
+    public constructor(
+        x: number = 0,      // x position in parent coordinate system 
         y: number = 0,       // y position in parent coordinate system 
         w: number = 42,      // initial width
         h: number = 13,      // initial height
         vis: boolean = true) // initial visibility status
     {
-        super(x,y,w,h,vis);
+        super(x, y, w, h, vis);
 
         // initial sizing configuration is fixed in width and elastic in height
         this._wConfig = SizeConfig.fixed(w);
-        this._hConfig = SizeConfig.elastic(h); 
-        
+        this._hConfig = SizeConfig.elastic(h);
+
         // justification type for layout along the height of the column
         this._hJustification = 'top';
     }
@@ -46,9 +46,9 @@ export class Row extends Group {
     //-------------------------------------------------------------------
 
     // How are objects positioned vertically along the height of the column
-    protected _hJustification : HJust = 'top';
-    public get hJustification() {return this._hJustification;}
-    public set hJustification(v : HJust) {
+    protected _hJustification: HJust = 'top';
+    public get hJustification() { return this._hJustification; }
+    public set hJustification(v: HJust) {
         if (v !== this._hJustification) {
             this._hJustification = v;
             this.damageAll();  // we have damaged our layout...
@@ -56,10 +56,10 @@ export class Row extends Group {
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
+
     // Override w setter so it enforces fixed size
-    public override get w() {return super.w;}
-    public override set w(v : number) {
+    public override get w() { return super.w; }
+    public override set w(v: number) {
         if (v !== this._w) {
             // damage at old size
             this.damageAll();
@@ -67,7 +67,7 @@ export class Row extends Group {
             this._wConfig = SizeConfig.fixed(v);
             // damage at new size
             this.damageAll();
-        } 
+        }
     }
 
     //-------------------------------------------------------------------
@@ -90,8 +90,11 @@ export class Row extends Group {
     // minimum of the child maximums.
     //
     // Our width is set to the width determined by stacking our children horizontally.
-    protected override _doLocalSizing() : void {
+    protected override _doLocalSizing(): void {
         //=== YOUR CODE HERE ===max};
+        for (let child of this.children) {
+            this.wConfig = SizeConfig.add(this.wConfig, child.wConfig);
+        }
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -125,11 +128,11 @@ export class Row extends Group {
 
             // if we have no compressability we are done
             // (we will end up clipping at the right as a fallback strategy)
-            if (availCompr === 0) return; 
-            
+            if (availCompr === 0) return;
+
             // don't try to make up more shortfall than we have available ompressability.  
             // (any remander will force a clip at the right)
-            let shortfall = -excess; 
+            let shortfall = -excess;
             shortfall = Math.min(availCompr, shortfall);
 
             // compress the child sizes to make up the shortfall
@@ -146,16 +149,25 @@ export class Row extends Group {
     //                 Compression for a single child is the difference between their
     //                 natural and minimum sizes (nat-min).
     //   * numSprings  The number of springs among the child objects.
-    protected _measureChildren() : [number, number, number] {
+    protected _measureChildren(): [number, number, number] {
         // walk across the children and measure the following:
         // - sum up the natural size of all our non-spring children
         // - how much non-spring objects can compress (nat-min) total
         // - how many springs we have
-        let natSum = 0;  
-        let availCompr = 0; 
-        let numSprings = 0; 
+        let natSum = 0;
+        let availCompr = 0;
+        let numSprings = 0;
 
         //=== YOUR CODE HERE ===
+        for (let child of this.children) {
+            if (child instanceof Spring) {
+                numSprings++;
+            }
+            else {
+                natSum += child.wConfig.nat;
+                availCompr += child.wConfig.nat - child.wConfig.min;
+            }
+        }
 
         return [natSum, availCompr, numSprings];
     }
@@ -166,8 +178,13 @@ export class Row extends Group {
     // excess space. Expansion space is allocated evenly among the springs. If there 
     // are no child springs, this does nothing (which has the eventual effect of leaving 
     // the space at the right of the row as a fallback strategy).
-    protected _expandChildSprings(excess : number, numSprings : number) : void {
+    protected _expandChildSprings(excess: number, numSprings: number): void {
         //=== YOUR CODE HERE ===
+        for (let child of this.children) {
+            if (child instanceof Spring) {
+                child.w = child.wConfig.nat = excess / numSprings; //allocate excess space evenly to each spring 
+            }
+        }
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -179,8 +196,8 @@ export class Row extends Group {
     // natural sizes).  Each child is compressed by a fraction of the total compression
     // that is equal to its fraction of the available compressability.
     protected _compressChildren(
-        shortfall : number,   // amount we need to compress overall
-        availCompr : number)  // total compressability across all children
+        shortfall: number,   // amount we need to compress overall
+        availCompr: number)  // total compressability across all children
     {
         // each child will be able to cover a fraction (possibly 0%) of the total 
         // compressabilty across all the children. we calculate the fraction for 
@@ -188,8 +205,13 @@ export class Row extends Group {
         // from the natural height of that child, to get the assigned height.
         for (let child of this.children) {
             //=== YOUR CODE HERE ===
+            if (!(child instanceof Spring)) {
+                let c = child.wConfig.nat - child.wConfig.min;
+                if (c === 0) return; //not compressable 
+                child.w -= SizeConfig.withinConfig(shortfall * (c / availCompr), child.wConfig);
+            }
         }
-}
+    }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -205,7 +227,7 @@ export class Row extends Group {
     // excess that _adjustChildren() couldn't allocate to springs will appear at 
     // the left of the stack.  Any horzontal shortfall that couldn't be compressed
     // out of children will result in clipping at the left.
-    protected override _completeLocalLayout() : void { 
+    protected override _completeLocalLayout(): void {
         // if we have no children we can be done now (and avoid some edge cases)
         if (this.children.length === 0) return;
 
@@ -213,17 +235,17 @@ export class Row extends Group {
         this._adjustChildren();
 
         // set child heights to their natural heights 
-        let hMax : number = 0;
+        let hMax: number = 0;
         for (let child of this.children) {
             child.h = child.hConfig.nat;
             if (child.h > hMax) hMax = child.h;
         }
-        
+
         // shrinkwrap: set our height to the height of the tallest child
         this.h = this.hConfig.nat = hMax;
 
         // stack up the children in the horizontal
-        let xpos : number = 0;
+        let xpos: number = 0;
         for (let child of this.children) {
             child.x = xpos;
             xpos += child.w;
@@ -232,6 +254,17 @@ export class Row extends Group {
         // apply our justification setting for the vertical
 
         //=== YOUR CODE HERE ===
+        for (let ch: number = 1; ch < this.children.length; ch++) {
+            if (this.hJustification === 'top'){
+                this.children[ch].y = this.children[0].y; 
+            }
+            else if (this.hJustification === 'center'){
+                this.children[ch].y = (this.children[0].y + this.children[0].h/2) - this.children[ch].h/2; 
+            }
+            else if (this.hJustification === 'bottom'){
+                this.children[ch].y = (this.children[0].y + this.children[0].h) - this.children[ch].h; 
+            } 
+        }
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -240,41 +273,41 @@ export class Row extends Group {
 
 //===================================================================
 
-export class Row_debug extends Row { 
+export class Row_debug extends Row {
 
-    public constructor(  
-        x : number = 0,      // x position in parent coordinate system 
+    public constructor(
+        x: number = 0,      // x position in parent coordinate system 
         y: number = 0,       // y position in parent coordinate system 
         w: number = 42,      // initial width
         h: number = 13,      // initial height
         vis: boolean = true) // initial visibility status
     {
-        super(x,y,w,h,vis);
+        super(x, y, w, h, vis);
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-    protected override _drawSelfOnly(ctx: DrawContext) : void { 
+    protected override _drawSelfOnly(ctx: DrawContext): void {
         ctx.fillStyle = 'thistle';
-        ctx.fillRect(0,0,this.w,this.h);
+        ctx.fillRect(0, 0, this.w, this.h);
         ctx.strokeStyle = 'black';
-        ctx.strokeRect(0,0,this.w,this.h);
-        
-        super._drawSelfOnly(ctx); 
+        ctx.strokeRect(0, 0, this.w, this.h);
+
+        super._drawSelfOnly(ctx);
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    public draw(ctx : DrawContext) : void { 
+    public draw(ctx: DrawContext): void {
         if (this.visible) {
             this._drawSelfOnly(ctx);
             this._drawChildren(ctx);
 
             // also draw an extra box on top of children 
             ctx.strokeStyle = 'black';
-            ctx.strokeRect(0,0,this.w,this.h);
+            ctx.strokeRect(0, 0, this.w, this.h);
         }
-        
-        
+
+
     }
 } // end of Row_debug class
 

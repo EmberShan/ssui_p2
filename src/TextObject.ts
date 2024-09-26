@@ -6,25 +6,24 @@ import { SizeConfig } from "./SizeConfig.js";
 // Object that displays a single text string on one line
 //===================================================================
 export class TextObject extends DrawnObjectBase {
-    
+
     public constructor(
-        x          : number, 
-        y          : number, 
-        text       : string = "", 
-        font       : string = TextObject.DEFAULT_FONT,
-        padding    : SizeLiteral | number = 0,
-        color      : string | number = 'black',
-        renderType : RenderOp = 'fill') 
-    {
-        super(x,y);
-            this._text = text;
-            this._font = font;
-            if (typeof padding === 'number') padding = {w:padding, h:padding};
-            this._padding = padding;
-            this._color = color;
-            this._renderType = renderType;
-            
-            this._recalcSize();
+        x: number,
+        y: number,
+        text: string = "",
+        font: string = TextObject.DEFAULT_FONT,
+        padding: SizeLiteral | number = 0,
+        color: string | number = 'black',
+        renderType: RenderOp = 'fill') {
+        super(x, y);
+        this._text = text;
+        this._font = font;
+        if (typeof padding === 'number') padding = { w: padding, h: padding };
+        this._padding = padding;
+        this._color = color;
+        this._renderType = renderType;
+
+        this._recalcSize();
     }
 
     //-------------------------------------------------------------------
@@ -32,12 +31,12 @@ export class TextObject extends DrawnObjectBase {
     //-------------------------------------------------------------------
 
     // string with text that we draw
-    protected _text : string ;
-    public get text() {return this._text;}
-    public set text(v : string) {
+    protected _text: string;
+    public get text() { return this._text; }
+    public set text(v: string) {
         //=== YOUR CODE HERE ===
-        if (this._text != v){
-            this._text = v; 
+        if (this._text !== v) {
+            this._text = v;
         }
     }
 
@@ -47,7 +46,7 @@ export class TextObject extends DrawnObjectBase {
     // in order to pick up the current default sized being used for the canvas and
     // likely inherited from the browser (and a multiple of 1em because that default 
     // seems to typically be fairly small).
-    static readonly DEFAULT_FONT : string = "1.5em sans-serif";
+    static readonly DEFAULT_FONT: string = "1.5em sans-serif";
 
     // CSS font specification string giving the font to draw the text of this object
     // with.  This string can contain any CSS font properties (separated by spaces).  
@@ -67,30 +66,38 @@ export class TextObject extends DrawnObjectBase {
     //
     // Note that font specification strings are not checked for validity.  Incorrectly
     // formatted strings are likely to be ignored.
-    protected _font : string;
-    public get font() {return this._font;}
-    public set font(v : string) {
+    protected _font: string;
+    public get font() { return this._font; }
+    public set font(v: string) {
         //=== YOUR CODE HERE ===
-    }  
-    
+        if (this._font !== v) {
+            this._font = v;
+            this.damageAll();
+        }
+    }
+
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     // Extra space placed around the text when determining the size of this object.
     // The setter here will allow either a SizeLiteral breaking out separate width and 
     // height padding, or a single number which will be applied to both.
     protected _padding: SizeLiteral;
-    public get padding() : SizeLiteral {return this._padding;}
-    public set padding(v : SizeLiteral | number) {
-        if (typeof v === 'number') v = {w:v, h:v};
+    public get padding(): SizeLiteral { return this._padding; }
+    public set padding(v: SizeLiteral | number) {
+        if (typeof v === 'number') v = { w: v, h: v };
         //=== YOUR CODE HERE ===
+        if (this._padding !== v) {
+            this._padding = v;
+            this.damageAll();
+        }
     }
-    
+
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     // Drawing type (filled or stroked)
-    protected _renderType : RenderOp;  
-    public get renderType() : RenderOp {return this._renderType;}
-    public set rederType(v : RenderOp) {this._renderType = v;}
+    protected _renderType: RenderOp;
+    public get renderType(): RenderOp { return this._renderType; }
+    public set rederType(v: RenderOp) { this._renderType = v; }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -99,23 +106,26 @@ export class TextObject extends DrawnObjectBase {
     // an RGB value. Beware that string values are not checked for validity and will 
     // silently turn into 'black' or be ignored if they are not understood by the 
     // underlying JavaScript implementation.
-    protected _color : string | number = 'black';
-    public get color() : string | number {return this._color;}
-    public set color(v : string | number) {this._color = v;}
+    protected _color: string | number = 'black';
+    public get color(): string | number { return this._color; }
+    public set color(v: string | number) { this._color = v; }
 
     //-------------------------------------------------------------------
     // Methods
     //-------------------------------------------------------------------
 
     // Recalculate the size of this object based on the size of the text
-    protected _recalcSize(ctx? : DrawContext) : void {
+    protected _recalcSize(ctx?: DrawContext): void {
         //=== YOUR CODE HERE ===
+        let v = this._measureText(this.text, this.font, ctx);
+        this.w = v.w;
+        this.h = v.h;
 
         // set the size configuration to be fixed at that size
         this.wConfig = SizeConfig.fixed(this.w);
         this.hConfig = SizeConfig.fixed(this.h);
     }
-    
+
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     // Method to draw this object.  Note that we are only handling left-to-right
@@ -128,17 +138,24 @@ export class TextObject extends DrawnObjectBase {
 
         try {
             // work out the color in string form 
-            let clr : string;
+            let clr: string;
             if (typeof this._color === 'number') {
                 // reformat  number into a string holding  HTML style hex notation number
                 clr = '#' + this.color.toString(16);
             } else {
                 clr = this.color.toString();
             }
-            
-            //=== YOUR CODE HERE ===
 
-        }   finally {
+            //=== YOUR CODE HERE ===
+            ctx.font = this.font;
+            ctx.fillStyle = clr;
+            if (this.renderType === 'stroke') {
+                ctx.strokeText(this.text, this.x, this.y);
+            } else {
+                ctx.fillText(this.text, this.x, this.y);
+            }
+
+        } finally {
             // restore the drawing context to the state it was given to us in
             ctx.restore();
         }
@@ -150,10 +167,10 @@ export class TextObject extends DrawnObjectBase {
     // gives basic information about the object.  We override this from the base class
     // to add the a few characters of the text to the result since that is likely to 
     // help identify the object.
-    public override tagString() : string {
+    public override tagString(): string {
         const TXT_TAG_LEN = 4;
-        return this.constructor.name + '<' + this.debugID + 
-               ':"' + this.text.substring(0,TXT_TAG_LEN) + '"' +'>';
+        return this.constructor.name + '<' + this.debugID +
+            ':"' + this.text.substring(0, TXT_TAG_LEN) + '"' + '>';
     }
 
 } // end of TextObject class
@@ -167,22 +184,21 @@ export class TextObject extends DrawnObjectBase {
 
 export class TextObject_debug extends TextObject {
     public constructor(
-        x          : number, 
-        y          : number, 
-        text       : string = "", 
-        font       : string = TextObject.DEFAULT_FONT,
-        padding    : SizeLiteral = {w:0, h:0},
-        color      : string | number = 'black',
-        renderType : RenderOp = 'fill') 
-    { 
-        super(x,y,text,font,padding,color,renderType);
+        x: number,
+        y: number,
+        text: string = "",
+        font: string = TextObject.DEFAULT_FONT,
+        padding: SizeLiteral = { w: 0, h: 0 },
+        color: string | number = 'black',
+        renderType: RenderOp = 'fill') {
+        super(x, y, text, font, padding, color, renderType);
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     // color we draw the background in
-    public debugColor : string = 'silver';
-    
+    public debugColor: string = 'silver';
+
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
     // Method to draw this object.  Here we fill out extent and draw a line for the
@@ -195,26 +211,26 @@ export class TextObject_debug extends TextObject {
 
         try {
             ctx.fillStyle = this.debugColor;
-            ctx.fillRect(0,0,this.w,this.h);
+            ctx.fillRect(0, 0, this.w, this.h);
 
             // apply our font & force text drawing to be done in the form we are expecting
             ctx.font = this.font;
             ctx.textBaseline = 'alphabetic'; // alphabetic baseline text only
             ctx.direction = 'ltr';           // handling left-to-right text only
-            ctx.textAlign = 'left'; 
-            
+            ctx.textAlign = 'left';
+
             // measure our text in order to get the baseline position
             const meas = this._measureText(this.text, this.font, ctx);
 
             ctx.beginPath();
             ctx.strokeStyle = (this.debugColor !== 'black') ? 'black' : 'white';
-            ctx.moveTo(0,meas.baseln); ctx.lineTo(this.w,meas.baseln); ctx.stroke();
+            ctx.moveTo(0, meas.baseln); ctx.lineTo(this.w, meas.baseln); ctx.stroke();
             ctx.beginPath();
 
             // the super class does the the regular drawing over the top
             super._drawSelfOnly(ctx);
 
-        }   finally {
+        } finally {
             // restore the drawing context to the state it was given to us in
             ctx.restore();
         }

@@ -78,6 +78,9 @@ export class Row extends Group {
     // Our width is set to the width determined by stacking our children horizontally.
     _doLocalSizing() {
         //=== YOUR CODE HERE ===max};
+        for (let child of this.children) {
+            this.wConfig = SizeConfig.add(this.wConfig, child.wConfig);
+        }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // This method adjusts the width of the children to do horizontal springs and struts 
@@ -135,6 +138,15 @@ export class Row extends Group {
         let availCompr = 0;
         let numSprings = 0;
         //=== YOUR CODE HERE ===
+        for (let child of this.children) {
+            if (child instanceof Spring) {
+                numSprings++;
+            }
+            else {
+                natSum += child.wConfig.nat;
+                availCompr += child.wConfig.nat - child.wConfig.min;
+            }
+        }
         return [natSum, availCompr, numSprings];
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -144,6 +156,11 @@ export class Row extends Group {
     // the space at the right of the row as a fallback strategy).
     _expandChildSprings(excess, numSprings) {
         //=== YOUR CODE HERE ===
+        for (let child of this.children) {
+            if (child instanceof Spring) {
+                child.w = child.wConfig.nat = excess / numSprings; //allocate excess space evenly to each spring 
+            }
+        }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Contract our child objects to make up the given amount of shortfall.  Springs
@@ -160,6 +177,12 @@ export class Row extends Group {
         // from the natural height of that child, to get the assigned height.
         for (let child of this.children) {
             //=== YOUR CODE HERE ===
+            if (!(child instanceof Spring)) {
+                let c = child.wConfig.nat - child.wConfig.min;
+                if (c === 0)
+                    return; //not compressable 
+                child.w -= SizeConfig.withinConfig(shortfall * (c / availCompr), child.wConfig);
+            }
         }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -198,6 +221,17 @@ export class Row extends Group {
         }
         // apply our justification setting for the vertical
         //=== YOUR CODE HERE ===
+        for (let ch = 1; ch < this.children.length; ch++) {
+            if (this.hJustification === 'top') {
+                this.children[ch].y = this.children[0].y;
+            }
+            else if (this.hJustification === 'center') {
+                this.children[ch].y = (this.children[0].y + this.children[0].h / 2) - this.children[ch].h / 2;
+            }
+            else if (this.hJustification === 'bottom') {
+                this.children[ch].y = (this.children[0].y + this.children[0].h) - this.children[ch].h;
+            }
+        }
     }
 }
 //===================================================================

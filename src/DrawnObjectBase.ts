@@ -108,12 +108,10 @@ export class DrawnObjectBase {
     public get x(): number { return this._x; }
     public set x(v: number) {
         if (v !== this.x) {
-
             // don't forget to declare damage whenever something changes
             // that could affect the display
 
             //=== YOUR CODE HERE ===
-            // this.x = (this.parent?.x ?? 0) + v; 
             this._x = v; 
             this.damageAll(); 
         }
@@ -467,7 +465,7 @@ export class DrawnObjectBase {
         // clip based on the parameters
         ctx.beginPath(); 
         ctx.rect(clipx, clipy, clipw, cliph); 
-        ctx.clip();
+        // ctx.clip();
     }
 
     // Utility routine to create a new rectangular path at our bounding box.
@@ -534,11 +532,15 @@ export class DrawnObjectBase {
 
         //=== YOUR CODE HERE ===
         // use the index to find the current child then do translation 
-        // then apply clipping 
-        ctx.beginPath();
-        let current = this._children[childIndx]; 
-        ctx.translate(this.x + current.x, this.y + current.y); 
-        this.applyClip(ctx, current.x, current.y, current.w, current.h); 
+        // ctx.beginPath();
+        let crr = this.children[childIndx]; 
+        // 'this' is the parent 
+        // translate so then the parent x and y will be considered as 0, 0
+        console.log('translation: ', this.x, this.y); // for debug
+        console.log(this, crr)
+        ctx.translate(this.x, this.y); 
+        // clip 
+        this.applyClip(ctx, crr.x, crr.y, crr.w, crr.h); 
     }
 
 
@@ -571,7 +573,6 @@ export class DrawnObjectBase {
             // exception to be propagated out, but will force the call to _endChildDraw() 
             // before we leave this function.
             try {
-                console.log('children is being drawn', this.children[ch])
                 this.children[ch].draw(ctx);
             } finally {
                 // (always) do revert the setup for drawing this child
@@ -668,11 +669,11 @@ export class DrawnObjectBase {
     // our parent.
     public damageArea(xv: number, yv: number, wv: number, hv: number): void {
         //=== YOUR CODE HERE ===
-        // resolved at the top of the tree 
+        // if it's not the top object 
         if (this.parent){
-            // if it's not the top object 
-            if(this.parent === this._findTop()) {console.log('reached the topobject')}
+            // notify its parent that it has been damaged 
             this.parent._damageFromChild(this, xv, yv, wv, hv); 
+            console.log('damaged', this); 
         }
     }
 
@@ -697,11 +698,14 @@ export class DrawnObjectBase {
         xInChildCoords: number, yInChildCoords: number,
         wv: number, hv: number): void {
         //=== YOUR CODE HERE ===
+        // pass the damage report up to the topobject
         if (this.parent){
             // if(this.parent === this._findTop()) {console.log('reached the topobject')}
             // change to parent's coordinates 
-            let p = this.parent; 
-            p._damageFromChild(this, this.x + xInChildCoords, this.y + yInChildCoords, wv, hv); 
+            this.parent._damageFromChild(this, this.x + xInChildCoords, this.y + yInChildCoords, wv, hv); 
+        } else {
+            // if it reaches the top object, then begin to resolve the damge area 
+            this.damageAll(); 
         }
     }
 

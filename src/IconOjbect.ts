@@ -10,24 +10,24 @@ import { DrawableImage } from "./DrawableImage.js";
 // resizing this object after construction may end up clipping the image
 //===================================================================
 export class IconObject extends DrawnObjectBase {
-    public constructor(  
-        x : number = 0,          // x position in parent coordinate system 
+    public constructor(
+        x: number = 0,          // x position in parent coordinate system 
         y: number = 0,           // y position in parent coordinate system 
         w: number = 42,          // initial width (but ignored if reszImg is false)
         h: number = 13,          // initial height (but ignored if reszImg is false)
-        urlOrImg? : string | DrawableImage, // image, source for image, or no initial image
+        urlOrImg?: string | DrawableImage, // image, source for image, or no initial image
         reszImg: boolean = true, // do we resize the image to our size?
         vis: boolean = true)     // initial visibility status
     {
-        super(x,y,w,h,vis);
+        super(x, y, w, h, vis);
 
         this._resizesImage = reszImg;
 
         if (typeof urlOrImg === 'string') {
             // make an arrow function to call our notification callback so it 
             // captures this properly
-            const loadNotifyCallback = (evt : Event, img : DrawableImage) : void => {
-                this._notifyLoaded(evt,img);
+            const loadNotifyCallback = (evt: Event, img: DrawableImage): void => {
+                this._notifyLoaded(evt, img);
             }
             // start start loading of an image from the URL
             this._image = new DrawableImage(urlOrImg, loadNotifyCallback);
@@ -43,14 +43,14 @@ export class IconObject extends DrawnObjectBase {
     //-------------------------------------------------------------------
 
     // Image that we draw
-    protected _image : DrawableImage | undefined; 
-    public get image() : DrawableImage | undefined {return this._image;}
+    protected _image: DrawableImage | undefined;
+    public get image(): DrawableImage | undefined { return this._image; }
 
-    public set image(urlOrImg : string | DrawableImage | undefined) {
+    public set image(urlOrImg: string | DrawableImage | undefined) {
         // make an arrow function to use for our callback, so it is a closure that
         // captures "this" properly
-        const loadNotifyCallback = (evt : Event, img : DrawableImage) : void => {
-            this._notifyLoaded(evt,img);
+        const loadNotifyCallback = (evt: Event, img: DrawableImage): void => {
+            this._notifyLoaded(evt, img);
         }
 
         if (typeof urlOrImg === 'string') {
@@ -58,7 +58,7 @@ export class IconObject extends DrawnObjectBase {
             if (!this._image || this._image.url !== urlOrImg) {
                 // damage the old position, then start creation of new image
                 this.damageAll();
-                this._image = new DrawableImage(urlOrImg, loadNotifyCallback); 
+                this._image = new DrawableImage(urlOrImg, loadNotifyCallback);
             }
         } else if (urlOrImg === undefined) {
             // if we had an image and we are being told to drop it, we are damaged
@@ -83,25 +83,33 @@ export class IconObject extends DrawnObjectBase {
 
     // If true, then we draw the image at our size, otherwise we set our
     // size to match the image size.  
-    protected _resizesImage : boolean = true;
-    public get resizesImage() {return this._resizesImage;}
-    public set resizesImage(v : boolean) {
+    protected _resizesImage: boolean = true;
+    public get resizesImage() { return this._resizesImage; }
+    public set resizesImage(v: boolean) {
         //=== YOUR CODE HERE ===
+        if (this._resizesImage !== v) {
+            this._resizesImage = v;
+            this.damageAll();
+        }
     }
 
     //-------------------------------------------------------------------
     // Methods
     //-------------------------------------------------------------------
-    
+
     // If our size is determined by the image, resize us to match (otherwise do nothing).
     protected _resize() {
         //=== YOUR CODE HERE ===
+        if (this.image?.canvasImage && this.resizesImage) {
+            this.w = this.image.canvasImage.width;
+            this.h = this.image.canvasImage.height;
+        }
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     // Function that is called when our loading is complete
-    protected _notifyLoaded(evt : Event, img : DrawableImage) : void {
+    protected _notifyLoaded(evt: Event, img: DrawableImage): void {
         // we always damage because even the same image object might change internally  
 
         // damage the old position/size
@@ -125,8 +133,11 @@ export class IconObject extends DrawnObjectBase {
 
         if (this.resizesImage) {
             //=== YOUR CODE HERE ===
+            ctx.drawImage(this.image.canvasImage, 0, 0, this.w, this.h);
         } else {
             //=== YOUR CODE HERE ===
+            console.log('>>>>>>>>>', this.image, this.x, this.y);
+            ctx.drawImage(this.image.canvasImage, 0, 0, this.w, this.h);
         }
     }
 
