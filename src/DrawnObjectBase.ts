@@ -67,6 +67,8 @@
 import { DrawContext, PointLiteral, SizeLiteral, TextMeasure } from "./Util.js";
 import { SizeConfig, SizeConfigLiteral } from "./SizeConfig.js";
 import { TopObject } from "./TopObject";
+import { FilledObject } from "./FilledObject.js";
+import { Column_debug } from "./Column.js";
 // used here to get a drawing context to measure text with
 
 
@@ -107,13 +109,13 @@ export class DrawnObjectBase {
     protected _x: number = 0;
     public get x(): number { return this._x; }
     public set x(v: number) {
-        if (v !== this.x) {
+        if (!(v === this.x)) {
             // don't forget to declare damage whenever something changes
             // that could affect the display
 
             //=== YOUR CODE HERE ===
-            this._x = v; 
-            this.damageAll(); 
+            this._x = v;
+            this.damageAll();
         }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -123,9 +125,9 @@ export class DrawnObjectBase {
     public get y(): number { return this._y; }
     public set y(v: number) {
         //=== YOUR CODE HERE ===
-        if (v !== this.y) {
-            this._y = v; 
-            this.damageAll(); 
+        if (!(v === this.y)) {
+            this._y = v;
+            this.damageAll();
         }
     }
 
@@ -145,9 +147,9 @@ export class DrawnObjectBase {
     public get w(): number { return this._w; }
     public set w(v: number) {
         //=== YOUR CODE HERE ===
-        if (v !== this.w) {
-            this._w = v; 
-            this.damageAll(); 
+        if (!(v === this.w)) {
+            this._w = v;
+            this.damageAll();
         }
     }
 
@@ -158,9 +160,9 @@ export class DrawnObjectBase {
     public get wConfig(): SizeConfigLiteral { return this._wConfig; }
     public set wConfig(v: SizeConfigLiteral) {
         //=== YOUR CODE HERE ===
-        if (!SizeConfig.eq(v, this._wConfig)){
-            this._wConfig = v; 
-            this.damageAll(); 
+        if (!SizeConfig.eq(v, this._wConfig)) {
+            this._wConfig = v;
+            this.damageAll();
         }
     }
 
@@ -187,9 +189,9 @@ export class DrawnObjectBase {
     public get h(): number { return this._h; }
     public set h(v: number) {
         //=== YOUR CODE HERE ===
-        if (v !== this.h) {
-            this._h = v; 
-            this.damageAll(); 
+        if (!(v === this.h)) {
+            this._h = v;
+            this.damageAll();
         }
     }
 
@@ -200,9 +202,9 @@ export class DrawnObjectBase {
     public get hConfig(): SizeConfigLiteral { return this._hConfig; }
     public set hConfig(v: SizeConfigLiteral) {
         //=== YOUR CODE HERE ===
-        if (!SizeConfig.eq(v, this._hConfig)){
-            this._hConfig = v; 
-            this.damageAll(); 
+        if (!SizeConfig.eq(v, this._hConfig)) {
+            this._hConfig = v;
+            this.damageAll();
         }
     }
 
@@ -237,9 +239,9 @@ export class DrawnObjectBase {
     public get visible(): boolean { return this._visible; }
     public set visible(v: boolean) {
         //=== YOUR CODE HERE ===
-        if (v !== this._visible){
-            this._visible = v; 
-            this.damageAll(); 
+        if (!(v === this._visible)) {
+            this._visible = v;
+            this.damageAll();
         }
     }
 
@@ -463,9 +465,10 @@ export class DrawnObjectBase {
         clipx: number, clipy: number, clipw: number, cliph: number) {
         //=== YOUR CODE HERE ===
         // clip based on the parameters
-        ctx.beginPath(); 
-        ctx.rect(clipx, clipy, clipw, cliph); 
-        // ctx.clip();
+        ctx.beginPath();
+        ctx.rect(clipx, clipy, clipw, cliph);
+        ctx.clip();
+        ctx.closePath(); 
     }
 
     // Utility routine to create a new rectangular path at our bounding box.
@@ -532,15 +535,19 @@ export class DrawnObjectBase {
 
         //=== YOUR CODE HERE ===
         // use the index to find the current child then do translation 
-        // ctx.beginPath();
-        let crr = this.children[childIndx]; 
+        let crr = this.children[childIndx];
         // 'this' is the parent 
         // translate so then the parent x and y will be considered as 0, 0
-        console.log('translation: ', this.x, this.y); // for debug
-        console.log(this, crr)
-        ctx.translate(this.x, this.y); 
+
+        // console.log('>>>>>>translation: ', this.x, this.y); // for debug
+        // console.log(crr.parent === this._findTop()); 
+        // console.log(crr, crr.parent); 
+
+        // reset then translate based on parent 
+        ctx.translate(crr.x, crr.y);
+        this.applyClip(ctx, 0, 0, crr.w, crr.h);
+
         // clip 
-        this.applyClip(ctx, crr.x, crr.y, crr.w, crr.h); 
     }
 
 
@@ -670,10 +677,9 @@ export class DrawnObjectBase {
     public damageArea(xv: number, yv: number, wv: number, hv: number): void {
         //=== YOUR CODE HERE ===
         // if it's not the top object 
-        if (this.parent){
+        if (this.parent) {
             // notify its parent that it has been damaged 
-            this.parent._damageFromChild(this, xv, yv, wv, hv); 
-            console.log('damaged', this); 
+            this.parent._damageFromChild(this, xv, yv, wv, hv);
         }
     }
 
@@ -699,13 +705,13 @@ export class DrawnObjectBase {
         wv: number, hv: number): void {
         //=== YOUR CODE HERE ===
         // pass the damage report up to the topobject
-        if (this.parent){
+        if (this.parent) {
             // if(this.parent === this._findTop()) {console.log('reached the topobject')}
             // change to parent's coordinates 
-            this.parent._damageFromChild(this, this.x + xInChildCoords, this.y + yInChildCoords, wv, hv); 
+            this.parent._damageFromChild(this, this.x + xInChildCoords, this.y + yInChildCoords, wv, hv);
         } else {
             // if it reaches the top object, then begin to resolve the damge area 
-            this.damageAll(); 
+            this.damageAll();
         }
     }
 

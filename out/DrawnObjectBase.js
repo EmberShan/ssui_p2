@@ -134,7 +134,7 @@ export class DrawnObjectBase {
     }
     get x() { return this._x; }
     set x(v) {
-        if (v !== this.x) {
+        if (!(v === this.x)) {
             // don't forget to declare damage whenever something changes
             // that could affect the display
             //=== YOUR CODE HERE ===
@@ -145,7 +145,7 @@ export class DrawnObjectBase {
     get y() { return this._y; }
     set y(v) {
         //=== YOUR CODE HERE ===
-        if (v !== this.y) {
+        if (!(v === this.y)) {
             this._y = v;
             this.damageAll();
         }
@@ -161,7 +161,7 @@ export class DrawnObjectBase {
     get w() { return this._w; }
     set w(v) {
         //=== YOUR CODE HERE ===
-        if (v !== this.w) {
+        if (!(v === this.w)) {
             this._w = v;
             this.damageAll();
         }
@@ -191,7 +191,7 @@ export class DrawnObjectBase {
     get h() { return this._h; }
     set h(v) {
         //=== YOUR CODE HERE ===
-        if (v !== this.h) {
+        if (!(v === this.h)) {
             this._h = v;
             this.damageAll();
         }
@@ -227,7 +227,7 @@ export class DrawnObjectBase {
     get visible() { return this._visible; }
     set visible(v) {
         //=== YOUR CODE HERE ===
-        if (v !== this._visible) {
+        if (!(v === this._visible)) {
             this._visible = v;
             this.damageAll();
         }
@@ -412,7 +412,8 @@ export class DrawnObjectBase {
         // clip based on the parameters
         ctx.beginPath();
         ctx.rect(clipx, clipy, clipw, cliph);
-        // ctx.clip();
+        ctx.clip();
+        ctx.closePath();
     }
     // Utility routine to create a new rectangular path at our bounding box.
     makeBoundingBoxPath(ctx) {
@@ -472,15 +473,16 @@ export class DrawnObjectBase {
         ctx.save();
         //=== YOUR CODE HERE ===
         // use the index to find the current child then do translation 
-        // ctx.beginPath();
         let crr = this.children[childIndx];
         // 'this' is the parent 
         // translate so then the parent x and y will be considered as 0, 0
-        console.log('translation: ', this.x, this.y); // for debug
-        console.log(this, crr);
-        ctx.translate(this.x, this.y);
+        // console.log('>>>>>>translation: ', this.x, this.y); // for debug
+        // console.log(crr.parent === this._findTop()); 
+        // console.log(crr, crr.parent); 
+        // reset then translate based on parent 
+        ctx.translate(crr.x, crr.y);
+        this.applyClip(ctx, 0, 0, crr.w, crr.h);
         // clip 
-        this.applyClip(ctx, crr.x, crr.y, crr.w, crr.h);
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Internal method to restore the given drawing context after drawing the 
@@ -599,7 +601,6 @@ export class DrawnObjectBase {
         if (this.parent) {
             // notify its parent that it has been damaged 
             this.parent._damageFromChild(this, xv, yv, wv, hv);
-            console.log('damaged', this);
         }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -625,6 +626,7 @@ export class DrawnObjectBase {
             this.parent._damageFromChild(this, this.x + xInChildCoords, this.y + yInChildCoords, wv, hv);
         }
         else {
+            // if it reaches the top object, then begin to resolve the damge area 
             this.damageAll();
         }
     }

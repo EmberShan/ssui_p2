@@ -75,9 +75,8 @@ export class IconObject extends DrawnObjectBase {
     get resizesImage() { return this._resizesImage; }
     set resizesImage(v) {
         //=== YOUR CODE HERE ===
-        if (this._resizesImage !== v) {
+        if (!(this._resizesImage === v)) {
             this._resizesImage = v;
-            this.damageAll();
         }
     }
     //-------------------------------------------------------------------
@@ -87,9 +86,10 @@ export class IconObject extends DrawnObjectBase {
     _resize() {
         var _a;
         //=== YOUR CODE HERE ===
-        if (((_a = this.image) === null || _a === void 0 ? void 0 : _a.canvasImage) && this.resizesImage) {
-            this.w = this.image.canvasImage.width;
-            this.h = this.image.canvasImage.height;
+        if (((_a = this.image) === null || _a === void 0 ? void 0 : _a.canvasImage) && !this.resizesImage) {
+            this.w = this.image.canvasImage.naturalWidth;
+            this.h = this.image.canvasImage.naturalHeight;
+            this.damageAll();
         }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -115,11 +115,13 @@ export class IconObject extends DrawnObjectBase {
             return;
         if (this.resizesImage) {
             //=== YOUR CODE HERE ===
+            // if do resize the image to fit the current bounding box
             ctx.drawImage(this.image.canvasImage, 0, 0, this.w, this.h);
         }
         else {
             //=== YOUR CODE HERE ===
-            console.log('>>>>>>>>>', this.image, this.x, this.y);
+            // if do not resize, so need to draw the image at its own size 
+            // (but we resized the current box to the image's size)
             ctx.drawImage(this.image.canvasImage, 0, 0, this.w, this.h);
         }
     }

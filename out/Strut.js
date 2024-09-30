@@ -23,7 +23,7 @@ export class Strut extends DrawnObjectBase {
     get w() { return super.w; }
     set w(v) {
         //=== YOUR CODE HERE ===
-        if (this._w !== v) {
+        if (!(this._w === v)) {
             this._w = v;
             this._wConfig = SizeConfig.fixed(v);
             this.damageAll();
@@ -32,7 +32,7 @@ export class Strut extends DrawnObjectBase {
     get h() { return super.h; }
     set h(v) {
         //=== YOUR CODE HERE ===
-        if (this._h !== v) {
+        if (!(this._h === v)) {
             this._h = v;
             this._hConfig = SizeConfig.fixed(v);
             this.damageAll();

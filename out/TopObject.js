@@ -162,14 +162,12 @@ export class TopObject extends DrawnObjectBase {
     // damage instead of passing it up the tree (since there is no up  from here).
     damageArea(xv, yv, wv, hv) {
         //=== YOUR CODE HERE ===
-        console.log('damged set to true in topobject');
         this._damaged = true;
         // setting the damaged area 
         this._damageRectX = this.x + xv;
         this._damageRectY = this.y + yv;
         this._damageRectW = wv;
         this._damageRectH = hv;
-        // this.layoutAndDrawAll(); 
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
     // Special routine to declare that damage has occured due to asynchronous

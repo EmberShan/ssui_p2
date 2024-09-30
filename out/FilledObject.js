@@ -24,7 +24,7 @@ export class FilledObject extends DrawnObjectBase {
     get w() { return super.w; }
     set w(v) {
         //=== YOUR CODE HERE ===
-        if (this._w !== v) {
+        if (!(this._w === v)) {
             this.damageAll();
             this._w = v;
             this._wConfig = SizeConfig.fixed(v);
@@ -34,7 +34,7 @@ export class FilledObject extends DrawnObjectBase {
     get h() { return super.h; }
     set h(v) {
         //=== YOUR CODE HERE ===
-        if (this._h !== v) {
+        if (!(this._h === v)) {
             this.damageAll();
             this._h = v;
             this._hConfig = SizeConfig.fixed(v);
@@ -67,7 +67,7 @@ export class FilledObject extends DrawnObjectBase {
         ctx.save();
         // drawing the rectangle here 
         ctx.beginPath();
-        ctx.rect(this.x, this.y, this.w, this.h);
+        ctx.rect(0, 0, this.w, this.h);
         ctx.fill();
         ctx.restore();
         super._drawSelfOnly(ctx);

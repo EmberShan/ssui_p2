@@ -28,7 +28,7 @@ export class FilledObject extends DrawnObjectBase {
     public override get w() {return super.w;}  
     public override set w(v : number) {
         //=== YOUR CODE HERE ===
-        if (this._w !== v){
+        if (!(this._w === v)){
             this.damageAll();
             this._w = v; 
             this._wConfig = SizeConfig.fixed(v); 
@@ -39,7 +39,7 @@ export class FilledObject extends DrawnObjectBase {
     public override get h() {return super.h;}
     public override set h(v : number) {
         //=== YOUR CODE HERE ===
-        if (this._h !== v){
+        if (!(this._h === v)){
             this.damageAll();
             this._h = v; 
             this._hConfig = SizeConfig.fixed(v); 
@@ -89,7 +89,7 @@ export class FilledObject extends DrawnObjectBase {
 
         // drawing the rectangle here 
         ctx.beginPath(); 
-        ctx.rect(this.x, this.y, this.w, this.h); 
+        ctx.rect(0, 0, this.w, this.h); 
         ctx.fill(); 
 
         ctx.restore();

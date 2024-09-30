@@ -39,7 +39,7 @@ export class Column extends Group {
     }
     get wJustification() { return this._wJustification; }
     set wJustification(v) {
-        if (v !== this._wJustification) {
+        if (!(v === this._wJustification)) {
             this._wJustification = v;
             this.damageAll(); // we have damaged our layout...
         }
@@ -48,7 +48,7 @@ export class Column extends Group {
     // Override h setter so it enforces fixed size
     get h() { return super.h; }
     set h(v) {
-        if (v !== this._h) {
+        if (!(v === this._h)) {
             // damage at old size
             this.damageAll();
             this._h = v;
@@ -78,13 +78,9 @@ export class Column extends Group {
     // Our height is set to the height determined by stacking our children vertically.
     _doLocalSizing() {
         //=== YOUR CODE HERE ===
-        // min is sum of mins, natual is sum of naturals, and max is sum of maxes
         for (let child of this.children) {
             // height configuration 
-            // this.hConfig.min += child.hConfig.min;
-            // this.hConfig.max += child.hConfig.max;
-            // this.hConfig.nat += child.hConfig.nat;
-            this.hConfig = SizeConfig.add(this.hConfig, child.hConfig);
+            this.hConfig = SizeConfig.maximum(this.hConfig, child.hConfig);
         }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -186,8 +182,7 @@ export class Column extends Group {
             if (!(child instanceof Spring)) {
                 // compressability of the child 
                 let c = child.hConfig.nat - child.hConfig.min;
-                if (c === 0)
-                    return; //not compressable 
+                // if (c === 0) return; //not compressable 
                 // calcualte the fraction and allocate the available compressable size
                 // and checking if it is within the range 
                 child.h -= SizeConfig.withinConfig(shortfall * (c / availCompr), child.hConfig);
@@ -230,17 +225,15 @@ export class Column extends Group {
         }
         // apply our justification setting for the horizontal
         //=== YOUR CODE HERE ===
-        for (let ch = 1; ch < this.children.length; ch++) {
+        for (let ch = 0; ch < this.children.length; ch++) {
             if (this.wJustification === 'left') {
-                this.children[ch].x = this.children[0].x; // left align with the top element 
+                this.children[ch].x = 0;
             }
             else if (this.wJustification === 'center') {
-                // align with the midpoint of the top element 
-                this.children[ch].x = (this.children[0].x + this.children[0].w / 2) - this.children[ch].w / 2;
+                this.children[ch].x = this.w / 2 - this.children[ch].w / 2;
             }
             else if (this.wJustification === 'right') {
-                // align with the rightmost point of the top element 
-                this.children[ch].x = (this.children[0].x + this.children[0].w) - this.children[ch].w;
+                this.children[ch].x = this.w - this.children[ch].w;
             }
         }
     }
@@ -260,8 +253,6 @@ export class Column_debug extends Column {
         ctx.fillRect(0, 0, this.w, this.h);
         ctx.strokeStyle = 'black';
         ctx.strokeRect(0, 0, this.w, this.h);
-        // ctx.fill(); 
-        // ctx.stroke(); 
         super._drawSelfOnly(ctx);
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -272,7 +263,6 @@ export class Column_debug extends Column {
             // also draw an extra box on top of children 
             ctx.strokeStyle = 'black';
             ctx.strokeRect(0, 0, this.w, this.h);
-            console.log('>>>>>>>>>drawing a column debug', this.x, '  ', this.y, '  ', this.w, '  ', this.h);
         }
     }
 } // end of Column_debug class

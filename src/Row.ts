@@ -93,7 +93,7 @@ export class Row extends Group {
     protected override _doLocalSizing(): void {
         //=== YOUR CODE HERE ===max};
         for (let child of this.children) {
-            this.wConfig = SizeConfig.add(this.wConfig, child.wConfig);
+            this.wConfig = SizeConfig.maximum(this.wConfig, child.wConfig);
         }
     }
 
@@ -254,15 +254,15 @@ export class Row extends Group {
         // apply our justification setting for the vertical
 
         //=== YOUR CODE HERE ===
-        for (let ch: number = 1; ch < this.children.length; ch++) {
+        for (let ch: number = 0; ch < this.children.length; ch++) {
             if (this.hJustification === 'top'){
-                this.children[ch].y = this.children[0].y; 
+                this.children[ch].y = 0; 
             }
             else if (this.hJustification === 'center'){
-                this.children[ch].y = (this.children[0].y + this.children[0].h/2) - this.children[ch].h/2; 
+                this.children[ch].y = this.h/2 - this.children[ch].h/2; 
             }
             else if (this.hJustification === 'bottom'){
-                this.children[ch].y = (this.children[0].y + this.children[0].h) - this.children[ch].h; 
+                this.children[ch].y = this.h; 
             } 
         }
     }

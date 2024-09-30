@@ -25,16 +25,17 @@ export class TextObject extends DrawnObjectBase {
     get text() { return this._text; }
     set text(v) {
         //=== YOUR CODE HERE ===
-        if (this._text !== v) {
+        if (!(this._text === v)) {
             this._text = v;
+            // this.damageAll();
         }
     }
     get font() { return this._font; }
     set font(v) {
         //=== YOUR CODE HERE ===
-        if (this._font !== v) {
+        if (!(this._font === v)) {
             this._font = v;
-            this.damageAll();
+            // this.damageAll();
         }
     }
     get padding() { return this._padding; }
@@ -42,9 +43,9 @@ export class TextObject extends DrawnObjectBase {
         if (typeof v === 'number')
             v = { w: v, h: v };
         //=== YOUR CODE HERE ===
-        if (this._padding !== v) {
+        if (!(this._padding === v)) {
             this._padding = v;
-            this.damageAll();
+            // this.damageAll();
         }
     }
     get renderType() { return this._renderType; }
@@ -58,8 +59,8 @@ export class TextObject extends DrawnObjectBase {
     _recalcSize(ctx) {
         //=== YOUR CODE HERE ===
         let v = this._measureText(this.text, this.font, ctx);
-        this.w = v.w;
-        this.h = v.h;
+        this.w = v.w + this.padding.w * 2;
+        this.h = v.h + this.padding.h * 2;
         // set the size configuration to be fixed at that size
         this.wConfig = SizeConfig.fixed(this.w);
         this.hConfig = SizeConfig.fixed(this.h);
@@ -85,11 +86,12 @@ export class TextObject extends DrawnObjectBase {
             //=== YOUR CODE HERE ===
             ctx.font = this.font;
             ctx.fillStyle = clr;
+            let v = this._measureText(this.text, this.font, ctx);
             if (this.renderType === 'stroke') {
-                ctx.strokeText(this.text, this.x, this.y);
+                ctx.strokeText(this.text, this.padding.w, this.padding.h + v.baseln);
             }
             else {
-                ctx.fillText(this.text, this.x, this.y);
+                ctx.fillText(this.text, this.padding.w, this.padding.h + v.baseln);
             }
         }
         finally {

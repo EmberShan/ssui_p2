@@ -42,10 +42,10 @@ export function runTests() {
     // set up the tree with all the test objects
     testFilled(root);
     testIcon(root, 725, 10);
-    // testText(root, 200, 50);
-    // testCol(root, 375, 300);
-    // testRow(root, 10, 600);
-    // testRowCol(root, 700, 350);
+    testText(root, 200, 50);
+    testCol(root, 375, 300);
+    testRow(root, 10, 600);
+    testRowCol(root, 700, 350);
     // tests we are no longer using
     // testDrawableImage(root.canvasContext, 700, 300); // no longer works...
     // testErr(); // intentionally throws an exception!
@@ -179,7 +179,6 @@ function resizer(x, y) {
         let newH = y - objToResize.y;
         if (newH < 10)
             newH = 10;
-        console.log("resizing to " + newW + "," + newH);
         objToResize.size = { w: newW, h: newH };
         root.layoutAndDrawAll();
     }
