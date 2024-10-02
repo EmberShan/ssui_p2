@@ -67,8 +67,6 @@
 import { DrawContext, PointLiteral, SizeLiteral, TextMeasure } from "./Util.js";
 import { SizeConfig, SizeConfigLiteral } from "./SizeConfig.js";
 import { TopObject } from "./TopObject";
-import { FilledObject } from "./FilledObject.js";
-import { Column_debug } from "./Column.js";
 // used here to get a drawing context to measure text with
 
 
@@ -678,8 +676,8 @@ export class DrawnObjectBase {
         //=== YOUR CODE HERE ===
         // if it's not the top object 
         if (this.parent) {
-            // notify its parent that it has been damaged 
-            this.parent._damageFromChild(this, xv, yv, wv, hv);
+            // call _damageFromChild to pass the damage report to the root
+            this._damageFromChild(this, xv, yv, wv, hv);
         }
     }
 
@@ -706,12 +704,11 @@ export class DrawnObjectBase {
         //=== YOUR CODE HERE ===
         // pass the damage report up to the topobject
         if (this.parent) {
-            // if(this.parent === this._findTop()) {console.log('reached the topobject')}
-            // change to parent's coordinates 
+            // pass to the parent and change coordinates  
             this.parent._damageFromChild(this, this.x + xInChildCoords, this.y + yInChildCoords, wv, hv);
         } else {
             // if it reaches the top object, then begin to resolve the damge area 
-            this.damageAll();
+            this.damageArea(xInChildCoords, yInChildCoords, wv, hv); 
         }
     }
 
