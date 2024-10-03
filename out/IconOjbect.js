@@ -115,13 +115,17 @@ export class IconObject extends DrawnObjectBase {
         if (this.resizesImage) {
             //=== YOUR CODE HERE ===
             // if do resize img, then just draw the img at bounding box's width and height 
+            ctx.save();
             ctx.drawImage(this.image.canvasImage, 0, 0, this.w, this.h);
+            ctx.restore();
         }
         else {
             //=== YOUR CODE HERE ===
             // if image does not resize, then resize our bounding box  
             this._resize();
+            ctx.save();
             ctx.drawImage(this.image.canvasImage, 0, 0, this.w, this.h);
+            ctx.restore();
         }
     }
 } // end of IconObject class

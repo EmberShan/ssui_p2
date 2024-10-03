@@ -1,4 +1,3 @@
-
 import { DrawnObjectBase } from "./DrawnObjectBase.js";
 import { SizeConfig, SizeConfigLiteral } from "./SizeConfig.js";
 
@@ -29,7 +28,6 @@ export class FilledObject extends DrawnObjectBase {
     public override set w(v : number) {
         //=== YOUR CODE HERE ===
         if (!(this._w === v)){
-            this.damageAll(); 
             this._w = v; 
             this._wConfig = SizeConfig.fixed(v); 
             this.damageAll(); 
@@ -40,7 +38,6 @@ export class FilledObject extends DrawnObjectBase {
     public override set h(v : number) {
         //=== YOUR CODE HERE ===
         if (!(this._h === v)){
-            this.damageAll(); 
             this._h = v; 
             this._hConfig = SizeConfig.fixed(v); 
             this.damageAll(); 

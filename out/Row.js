@@ -123,7 +123,6 @@ export class Row extends Group {
             // (any remander will force a clip at the right)
             let shortfall = -excess;
             shortfall = Math.min(availCompr, shortfall);
-            console.log('shortfall happens');
             // compress the child sizes to make up the shortfall
             this._compressChildren(shortfall, availCompr);
         }

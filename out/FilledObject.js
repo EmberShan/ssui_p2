@@ -25,7 +25,6 @@ export class FilledObject extends DrawnObjectBase {
     set w(v) {
         //=== YOUR CODE HERE ===
         if (!(this._w === v)) {
-            this.damageAll();
             this._w = v;
             this._wConfig = SizeConfig.fixed(v);
             this.damageAll();
@@ -35,7 +34,6 @@ export class FilledObject extends DrawnObjectBase {
     set h(v) {
         //=== YOUR CODE HERE ===
         if (!(this._h === v)) {
-            this.damageAll();
             this._h = v;
             this._hConfig = SizeConfig.fixed(v);
             this.damageAll();

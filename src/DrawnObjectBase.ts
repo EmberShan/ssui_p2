@@ -145,9 +145,10 @@ export class DrawnObjectBase {
     public get w(): number { return this._w; }
     public set w(v: number) {
         //=== YOUR CODE HERE ===
+        v = SizeConfig.withinConfig(v, this._wConfig); 
         if (!(v === this._w)) {
             // check if the value is within our bounds 
-            this._w = SizeConfig.withinConfig(v, this._wConfig);
+            this._w = v;
             this.damageAll();
         }
     }
@@ -188,9 +189,10 @@ export class DrawnObjectBase {
     public get h(): number { return this._h; }
     public set h(v: number) {
         //=== YOUR CODE HERE ===
+        v = SizeConfig.withinConfig(v, this._hConfig); 
         if (!(v === this._h)) {
             // check if the value is within our bounds 
-            this._h = SizeConfig.withinConfig(v, this._hConfig);
+            this._h = v;
             this.damageAll();
         }
     }
@@ -668,9 +670,9 @@ export class DrawnObjectBase {
     // our parent.
     public damageArea(xv: number, yv: number, wv: number, hv: number): void {
         //=== YOUR CODE HERE ===
-        // if it's not the top object, then pass the damage report up the tree 
-        if (this.parent){
-            this._damageFromChild(this, xv, yv, wv, hv); 
+        // if this is not the top object, then pass the damage report up the tree 
+        if (this.parent) {
+            this._damageFromChild(this, this.x + xv, this.y + yv, wv, hv); 
         }  
     }
 
@@ -696,8 +698,8 @@ export class DrawnObjectBase {
         wv: number, hv: number): void {
         //=== YOUR CODE HERE ===
         if (this.parent) {
-            // pass to the parent and change coordinates  
-            this.parent._damageFromChild(this, this.x + xInChildCoords, this.y + yInChildCoords, wv, hv);
+            // pass to the parent   
+            this.parent._damageFromChild(this, xInChildCoords, yInChildCoords, wv, hv);
         } else {
             // if it reaches the top object, then begin to resolve the damge area 
             this.damageArea(xInChildCoords, yInChildCoords, wv, hv); 

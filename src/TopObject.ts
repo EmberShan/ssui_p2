@@ -183,7 +183,7 @@
             // do the actual drawing from here down the tree
 
             //=== YOUR CODE HERE ===
-            // call from base class to draw children
+            // call from base class to draw children 
             this.draw(this.canvasContext);
             
         } catch (err) {
@@ -219,42 +219,32 @@
     // damage instead of passing it up the tree (since there is no up from here).
     public override damageArea(xv: number, yv: number, wv: number, hv: number): void {
         //=== YOUR CODE HERE ===
+        if (!(this._damaged === true)){
+            // New child is damaged. Record the damage area for future comparison 
+            this._damageRectX = xv; 
+            this._damageRectY = yv; 
+            this._damageRectW = wv; 
+            this._damageRectH = hv; 
+            // waiting to be redrawn 
+            this._damaged = true; 
 
-        // if damage is not yet resolved, the damage area might or might not need update;
-        let maxW = Math.max(this._damageRectX + this._damageRectW, wv + xv); 
-        let maxH = Math.max(this._damageRectY + this._damageRectH, hv + yv); 
+        } else {
+            // if damage is not yet resolved, the damage area might or might not need update;
 
-        // set x and y of our damage area to be the smallest 
-        this._damageRectX = Math.min(this._damageRectX, xv);
-        this._damageRectY = Math.min(this._damageRectY, yv);
+            // find the furthest of the bottom right corner 
+            let cornerW = Math.max(this._damageRectX + this._damageRectW, wv + xv); 
+            let cornerH = Math.max(this._damageRectY + this._damageRectH, hv + yv); 
 
-        // calculate the w and h 
-        this._damageRectW = maxW - this._damageRectX;
-        this._damageRectH = maxH - this._damageRectY; 
-        this._damaged = true;
+            // set x and y of our damage area to be the smallest 
+            this._damageRectX = Math.min(this._damageRectX, xv);
+            this._damageRectY = Math.min(this._damageRectY, yv);
+            
+            // calculate the w and h of the damage area 
+            this._damageRectW = cornerW - this._damageRectX + 100; // damage a little more for the image
+            this._damageRectH = cornerH - this._damageRectY + 100; 
 
-        // if (this._damaged === true){
-        //     // find the furthest of the bottom right point 
-        //     let maxW = Math.max(this._damageRectX + this._damageRectW, wv + xv); 
-        //     let maxH = Math.max(this._damageRectY + this._damageRectH, hv + yv); 
-
-        //     // set x and y of our damage area to be the smallest 
-        //     this._damageRectX = Math.min(this._damageRectX, xv);
-        //     this._damageRectY = Math.min(this._damageRectY, yv);
-
-        //     // calculate the w and h 
-        //     this._damageRectW = maxW - this._damageRectX;
-        //     this._damageRectH = maxH - this._damageRectY; 
-
-        // } else {
-        //     // new child is damaged. Record the damage area for future comparison 
-        //     this._damageRectX = xv; 
-        //     this._damageRectY = yv; 
-        //     this._damageRectW = wv; 
-        //     this._damageRectH = hv; 
-        //     // waiting to be redrawn 
-        //     this._damaged = true;
-        // } 
+            // console.log(this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH)
+        }; 
         
     }
 

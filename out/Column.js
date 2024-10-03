@@ -78,9 +78,8 @@ export class Column extends Group {
     // Our height is set to the height determined by stacking our children vertically.
     _doLocalSizing() {
         //=== YOUR CODE HERE ===
-        // first set an empty var 
-        let v = { nat: 0, min: 0, max: 0 };
         // calculate the sum of the child height configs and max of the width configs 
+        let v = { nat: 0, min: 0, max: 0 };
         for (let child of this.children) {
             v = SizeConfig.add(v, child.hConfig);
             this.wConfig = SizeConfig.maximum(this.wConfig, child.wConfig);
@@ -244,7 +243,6 @@ export class Column extends Group {
                 this.children[ch].x = this.w - this.children[ch].w;
             }
         }
-        // this.damageAll(); 
     }
 }
 //===================================================================

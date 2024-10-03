@@ -55,6 +55,7 @@ export class TextObject extends DrawnObjectBase {
     // Recalculate the size of this object based on the size of the text
     _recalcSize(ctx) {
         //=== YOUR CODE HERE ===
+        // resize our object based on the text content 
         let v = this._measureText(this.text, this.font, ctx);
         this._w = v.w + this.padding.w * 2;
         this._h = v.h + this.padding.h * 2;
@@ -81,9 +82,11 @@ export class TextObject extends DrawnObjectBase {
                 clr = this.color.toString();
             }
             //=== YOUR CODE HERE ===
+            // set our canvas context to use the assigned font and color 
             ctx.font = this.font;
             ctx.fillStyle = clr;
             let v = this._measureText(this.text, this.font, ctx);
+            // draw based on the render type 
             if (this.renderType === 'stroke') {
                 ctx.strokeText(this.text, this.padding.w, this.padding.h + v.baseln);
             }
