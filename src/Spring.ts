@@ -32,6 +32,7 @@ export class Spring extends DrawnObjectBase {
         if(!(this._w === v)){
             this._w = v; 
             this._wConfig = SizeConfig.elastic(v);
+            this.damageAll(); 
         }
     }
 
@@ -41,6 +42,7 @@ export class Spring extends DrawnObjectBase {
         if(!(this._h === v)){
             this._h = v; 
             this._hConfig = SizeConfig.elastic(v);
+            this.damageAll(); 
         }
     }
 
@@ -76,8 +78,6 @@ export class Spring_debug extends Spring {
 
     protected override _drawSelfOnly(ctx: CanvasRenderingContext2D): void { 
         ctx.save();
-
-        // console.log('drawing a spring at ', this.x, this.y); 
 
         // box around the outside
         ctx.strokeStyle = 'black';

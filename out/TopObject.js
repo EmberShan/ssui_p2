@@ -132,7 +132,6 @@ export class TopObject extends DrawnObjectBase {
                 //=== YOUR CODE HERE ===
                 // clip to the damaged area
                 this.applyClip(this.canvasContext, this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH);
-                console.log('>>>>applying damage clip', this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH);
                 // after this we will no longer be damaged, so reset our damage tracking
                 // rectangle to be our whole bounds
                 this._damageRectX = this._damageRectY = 0;
@@ -172,27 +171,34 @@ export class TopObject extends DrawnObjectBase {
     damageArea(xv, yv, wv, hv) {
         //=== YOUR CODE HERE ===
         // if damage is not yet resolved, the damage area might or might not need update;
-        if (this._damaged === true) {
-            // find the furthest of the bottom right point 
-            let maxW = Math.max(this._damageRectX + this._damageRectW, wv + xv);
-            let maxH = Math.max(this._damageRectY + this._damageRectH, hv + yv);
-            // set x and y of our damage area to be the smallest 
-            this._damageRectX = Math.min(this._damageRectX, xv);
-            this._damageRectY = Math.min(this._damageRectY, yv);
-            // calculate the w and h 
-            this._damageRectW = maxW - this._damageRectX;
-            this._damageRectH = maxH - this._damageRectY;
-        }
-        else {
-            // new child is damaged. Record the damage area for future comparison 
-            this._damageRectX = xv;
-            this._damageRectY = yv;
-            this._damageRectW = wv;
-            this._damageRectH = hv;
-            // waiting to be redrawn 
-            this._damaged = true;
-        }
-        ;
+        let maxW = Math.max(this._damageRectX + this._damageRectW, wv + xv);
+        let maxH = Math.max(this._damageRectY + this._damageRectH, hv + yv);
+        // set x and y of our damage area to be the smallest 
+        this._damageRectX = Math.min(this._damageRectX, xv);
+        this._damageRectY = Math.min(this._damageRectY, yv);
+        // calculate the w and h 
+        this._damageRectW = maxW - this._damageRectX;
+        this._damageRectH = maxH - this._damageRectY;
+        this._damaged = true;
+        // if (this._damaged === true){
+        //     // find the furthest of the bottom right point 
+        //     let maxW = Math.max(this._damageRectX + this._damageRectW, wv + xv); 
+        //     let maxH = Math.max(this._damageRectY + this._damageRectH, hv + yv); 
+        //     // set x and y of our damage area to be the smallest 
+        //     this._damageRectX = Math.min(this._damageRectX, xv);
+        //     this._damageRectY = Math.min(this._damageRectY, yv);
+        //     // calculate the w and h 
+        //     this._damageRectW = maxW - this._damageRectX;
+        //     this._damageRectH = maxH - this._damageRectY; 
+        // } else {
+        //     // new child is damaged. Record the damage area for future comparison 
+        //     this._damageRectX = xv; 
+        //     this._damageRectY = yv; 
+        //     this._damageRectW = wv; 
+        //     this._damageRectH = hv; 
+        //     // waiting to be redrawn 
+        //     this._damaged = true;
+        // } 
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Special routine to declare that damage has occured due to asynchronous

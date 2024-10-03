@@ -26,6 +26,7 @@ export class Spring extends DrawnObjectBase {
         if (!(this._w === v)) {
             this._w = v;
             this._wConfig = SizeConfig.elastic(v);
+            this.damageAll();
         }
     }
     get h() { return super.h; }
@@ -34,6 +35,7 @@ export class Spring extends DrawnObjectBase {
         if (!(this._h === v)) {
             this._h = v;
             this._hConfig = SizeConfig.elastic(v);
+            this.damageAll();
         }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -61,7 +63,6 @@ export class Spring_debug extends Spring {
     }
     _drawSelfOnly(ctx) {
         ctx.save();
-        // console.log('drawing a spring at ', this.x, this.y); 
         // box around the outside
         ctx.strokeStyle = 'black';
         ctx.strokeRect(0, 0, this.w, this.h);

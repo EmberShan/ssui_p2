@@ -145,8 +145,9 @@ export class DrawnObjectBase {
     public get w(): number { return this._w; }
     public set w(v: number) {
         //=== YOUR CODE HERE ===
-        if (!(v === this.w)) {
-            this._w = v;
+        if (!(v === this._w)) {
+            // check if the value is within our bounds 
+            this._w = SizeConfig.withinConfig(v, this._wConfig);
             this.damageAll();
         }
     }
@@ -187,8 +188,9 @@ export class DrawnObjectBase {
     public get h(): number { return this._h; }
     public set h(v: number) {
         //=== YOUR CODE HERE ===
-        if (!(v === this.h)) {
-            this._h = v;
+        if (!(v === this._h)) {
+            // check if the value is within our bounds 
+            this._h = SizeConfig.withinConfig(v, this._hConfig);
             this.damageAll();
         }
     }
@@ -534,18 +536,10 @@ export class DrawnObjectBase {
         //=== YOUR CODE HERE ===
         // use the index to find the current child then do translation 
         let crr = this.children[childIndx];
-        // 'this' is the parent 
-        // translate so then the parent x and y will be considered as 0, 0
-
-        // console.log('>>>>>>translation: ', this.x, this.y); // for debug
-        // console.log(crr.parent === this._findTop()); 
-        // console.log(crr, crr.parent); 
-
-        // reset then translate based on parent 
         ctx.translate(crr.x, crr.y);
+        // apply clip 
         this.applyClip(ctx, 0, 0, crr.w, crr.h);
 
-        // clip 
     }
 
 
@@ -674,11 +668,10 @@ export class DrawnObjectBase {
     // our parent.
     public damageArea(xv: number, yv: number, wv: number, hv: number): void {
         //=== YOUR CODE HERE ===
-        // if it's not the top object 
-        if (this.parent) {
-            // call _damageFromChild to pass the damage report to the root
-            this._damageFromChild(this, xv, yv, wv, hv);
-        }
+        // if it's not the top object, then pass the damage report up the tree 
+        if (this.parent){
+            this._damageFromChild(this, xv, yv, wv, hv); 
+        }  
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -702,7 +695,6 @@ export class DrawnObjectBase {
         xInChildCoords: number, yInChildCoords: number,
         wv: number, hv: number): void {
         //=== YOUR CODE HERE ===
-        // pass the damage report up to the topobject
         if (this.parent) {
             // pass to the parent and change coordinates  
             this.parent._damageFromChild(this, this.x + xInChildCoords, this.y + yInChildCoords, wv, hv);

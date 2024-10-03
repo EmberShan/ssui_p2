@@ -77,10 +77,16 @@ export class Row extends Group {
     //
     // Our width is set to the width determined by stacking our children horizontally.
     _doLocalSizing() {
-        //=== YOUR CODE HERE ===max};
+        //=== YOUR CODE HERE ===;
+        // first set an empty var 
+        let v = { nat: 0, min: 0, max: 0 };
+        // calculate the sum of the child height configs and max of the width configs 
         for (let child of this.children) {
-            this.wConfig = SizeConfig.maximum(this.wConfig, child.wConfig);
+            v = SizeConfig.add(v, child.wConfig);
+            this.hConfig = SizeConfig.maximum(this.hConfig, child.hConfig);
         }
+        ;
+        this.wConfig = v;
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // This method adjusts the width of the children to do horizontal springs and struts 
@@ -117,6 +123,7 @@ export class Row extends Group {
             // (any remander will force a clip at the right)
             let shortfall = -excess;
             shortfall = Math.min(availCompr, shortfall);
+            console.log('shortfall happens');
             // compress the child sizes to make up the shortfall
             this._compressChildren(shortfall, availCompr);
         }
@@ -139,9 +146,12 @@ export class Row extends Group {
         let numSprings = 0;
         //=== YOUR CODE HERE ===
         for (let child of this.children) {
+            // calculate number of springs 
             if (child instanceof Spring) {
                 numSprings++;
             }
+            // if not a spring, then add their natural size (springs have nat size of 0)
+            // and calculate their available compressibility 
             else {
                 natSum += child.wConfig.nat;
                 availCompr += child.wConfig.nat - child.wConfig.min;
@@ -158,7 +168,7 @@ export class Row extends Group {
         //=== YOUR CODE HERE ===
         for (let child of this.children) {
             if (child instanceof Spring) {
-                child.w = child.wConfig.nat = excess / numSprings; //allocate excess space evenly to each spring 
+                child.w = excess / numSprings; //allocate excess space evenly to each spring 
             }
         }
     }
@@ -179,8 +189,8 @@ export class Row extends Group {
             //=== YOUR CODE HERE ===
             if (!(child instanceof Spring)) {
                 let c = child.wConfig.nat - child.wConfig.min;
-                if (c === 0)
-                    return; //not compressable 
+                // if (c === 0) return; //not compressable 
+                // compress the children based on a certain fraction of their compressability 
                 child.w -= SizeConfig.withinConfig(shortfall * (c / availCompr), child.wConfig);
             }
         }

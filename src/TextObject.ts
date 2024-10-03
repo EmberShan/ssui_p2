@@ -37,7 +37,6 @@ export class TextObject extends DrawnObjectBase {
         //=== YOUR CODE HERE ===
         if (!(this._text === v)) {
             this._text = v;
-            // this.damageAll();
         }
     }
 
@@ -73,7 +72,6 @@ export class TextObject extends DrawnObjectBase {
         //=== YOUR CODE HERE ===
         if (!(this._font === v)) {
             this._font = v;
-            // this.damageAll();
         }
     }
 
@@ -89,7 +87,6 @@ export class TextObject extends DrawnObjectBase {
         //=== YOUR CODE HERE ===
         if (!(this._padding === v)) {
             this._padding = v;
-            // this.damageAll();
         }
     }
 
@@ -118,9 +115,10 @@ export class TextObject extends DrawnObjectBase {
     // Recalculate the size of this object based on the size of the text
     protected _recalcSize(ctx?: DrawContext): void {
         //=== YOUR CODE HERE ===
+        // resize our object based on the text content 
         let v = this._measureText(this.text, this.font, ctx);
-        this.w = v.w + this.padding.w*2;
-        this.h = v.h + this.padding.h*2;
+        this._w = v.w + this.padding.w * 2;
+        this._h = v.h + this.padding.h * 2;
 
         // set the size configuration to be fixed at that size
         this.wConfig = SizeConfig.fixed(this.w);
@@ -148,10 +146,12 @@ export class TextObject extends DrawnObjectBase {
             }
 
             //=== YOUR CODE HERE ===
+            // set our canvas context to use the assigned font and color 
             ctx.font = this.font;
             ctx.fillStyle = clr;
-            let v = this._measureText(this.text, this.font, ctx); 
 
+            let v = this._measureText(this.text, this.font, ctx); 
+            // draw based on the render type 
             if (this.renderType === 'stroke') {
                 ctx.strokeText(this.text, this.padding.w, this.padding.h + v.baseln);
             } else {

@@ -161,8 +161,8 @@ export class DrawnObjectBase {
     get w() { return this._w; }
     set w(v) {
         //=== YOUR CODE HERE ===
-        if (!(v === this.w)) {
-            this._w = v;
+        if (!(v === this._w)) {
+            this._w = SizeConfig.withinConfig(v, this._wConfig);
             this.damageAll();
         }
     }
@@ -191,8 +191,8 @@ export class DrawnObjectBase {
     get h() { return this._h; }
     set h(v) {
         //=== YOUR CODE HERE ===
-        if (!(v === this.h)) {
-            this._h = v;
+        if (!(v === this._h)) {
+            this._h = SizeConfig.withinConfig(v, this._hConfig);
             this.damageAll();
         }
     }
@@ -474,15 +474,9 @@ export class DrawnObjectBase {
         //=== YOUR CODE HERE ===
         // use the index to find the current child then do translation 
         let crr = this.children[childIndx];
-        // 'this' is the parent 
-        // translate so then the parent x and y will be considered as 0, 0
-        // console.log('>>>>>>translation: ', this.x, this.y); // for debug
-        // console.log(crr.parent === this._findTop()); 
-        // console.log(crr, crr.parent); 
         // reset then translate based on parent 
         ctx.translate(crr.x, crr.y);
         this.applyClip(ctx, 0, 0, crr.w, crr.h);
-        // clip 
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Internal method to restore the given drawing context after drawing the 
@@ -597,11 +591,18 @@ export class DrawnObjectBase {
     // our parent.
     damageArea(xv, yv, wv, hv) {
         //=== YOUR CODE HERE ===
-        // if it's not the top object 
+        // if it's not the top object, then pass the damage report up the tree 
         if (this.parent) {
-            // call _damageFromChild to pass the damage report to the root
             this._damageFromChild(this, xv, yv, wv, hv);
         }
+        // if (this.parent 
+        //     // && !this.wIsFixed()
+        //     // && wv === SizeConfig.withinConfig(wv, this.wConfig)
+        //     // && hv === SizeConfig.withinConfig(hv, this.hConfig)
+        // ) {
+        //     // call _damageFromChild to pass the damage report to the root            
+        //     this._damageFromChild(this, xv, yv, wv, hv); 
+        // }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Declare that the entire bounding box has been damaged.  This is the typical 

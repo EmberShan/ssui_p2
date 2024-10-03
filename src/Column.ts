@@ -1,5 +1,5 @@
 
-import { SizeConfig } from "./SizeConfig.js";
+import { SizeConfig, SizeConfigLiteral } from "./SizeConfig.js";
 import { DrawContext, WJust } from "./Util.js";
 import { Group } from "./Group.js";
 import { Spring } from "./Spring.js";
@@ -87,15 +87,22 @@ export class Column extends Group {
     // Our width min is set to hold all the children at their min size (the maximum
     // of the child mins).  Our natural size is set to hold all the children at their
     // natural sizes (the maximum of child naturals).  Finally our max is set to the 
-    // minimum of the child maximums.+++++
+    // maximum of the child maximums.+++++
     //
     // Our height is set to the height determined by stacking our children vertically.
     protected override _doLocalSizing(): void {
         //=== YOUR CODE HERE ===
+        // first set an empty var 
+        let v: SizeConfigLiteral = {nat: 0, min: 0, max: 0}; 
+
+        // calculate the sum of the child height configs and max of the width configs 
         for (let child of this.children) {
-            // height configuration 
-            this.hConfig = SizeConfig.maximum(this.hConfig, child.hConfig); 
+            v = SizeConfig.add(v, child.hConfig); 
+            this.wConfig = SizeConfig.maximum(this.wConfig, child.wConfig); 
         }
+
+        this.hConfig = v; 
+
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -166,7 +173,7 @@ export class Column extends Group {
             }
             else {
                 natSum += child.hConfig.nat;
-                availCompr += child.hConfig.nat - child.hConfig.min;
+                availCompr += (child.hConfig.nat - child.hConfig.min);
             }
         }
 
@@ -181,11 +188,13 @@ export class Column extends Group {
     // the space at the bottom of the column as a fallback strategy).
     protected _expandChildSprings(excess: number, numSprings: number): void {
         //=== YOUR CODE HERE ===
+        excess = Math.min(this.hConfig.max, excess); 
         for (let child of this.children) {
             if (child instanceof Spring) {
-                child.h = child.hConfig.nat = excess / numSprings; //allocate excess space evenly to each spring 
+                child.h = excess / numSprings; //allocate excess space evenly to each spring 
             }
-        }
+        }; 
+        // this._doLocalSizing(); 
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -216,6 +225,7 @@ export class Column extends Group {
                 child.h -= SizeConfig.withinConfig(shortfall * (c / availCompr), child.hConfig);
             }
         }
+        // this._doLocalSizing(); 
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -270,6 +280,8 @@ export class Column extends Group {
                 this.children[ch].x = this.w - this.children[ch].w; 
             } 
         }
+
+        // this.damageAll(); 
 
     }
 

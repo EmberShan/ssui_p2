@@ -100,9 +100,8 @@ export class IconObject extends DrawnObjectBase {
     protected _resize() {
         //=== YOUR CODE HERE ===
         if (this.image?.canvasImage && !this.resizesImage) {
-            this.w = this.image.canvasImage.naturalWidth;
-            this.h = this.image.canvasImage.naturalHeight;
-            this.damageAll(); 
+            this._w = this.image.canvasImage.naturalWidth;
+            this._h = this.image.canvasImage.naturalHeight;
         }
     }
 
@@ -133,12 +132,12 @@ export class IconObject extends DrawnObjectBase {
 
         if (this.resizesImage) {
             //=== YOUR CODE HERE ===
-            // if do resize the image to fit the current bounding box
+            // if do resize img, then just draw the img at bounding box's width and height 
             ctx.drawImage(this.image.canvasImage, 0, 0, this.w, this.h);
         } else {
             //=== YOUR CODE HERE ===
-            // if do not resize, so need to draw the image at its own size 
-            // (but we resized the current box to the image's size)
+            // if image does not resize, then resize our bounding box  
+            this._resize(); 
             ctx.drawImage(this.image.canvasImage, 0, 0, this.w, this.h);
         }
     }

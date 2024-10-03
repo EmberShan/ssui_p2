@@ -27,7 +27,6 @@ export class TextObject extends DrawnObjectBase {
         //=== YOUR CODE HERE ===
         if (!(this._text === v)) {
             this._text = v;
-            // this.damageAll();
         }
     }
     get font() { return this._font; }
@@ -35,7 +34,6 @@ export class TextObject extends DrawnObjectBase {
         //=== YOUR CODE HERE ===
         if (!(this._font === v)) {
             this._font = v;
-            // this.damageAll();
         }
     }
     get padding() { return this._padding; }
@@ -45,7 +43,6 @@ export class TextObject extends DrawnObjectBase {
         //=== YOUR CODE HERE ===
         if (!(this._padding === v)) {
             this._padding = v;
-            // this.damageAll();
         }
     }
     get renderType() { return this._renderType; }
@@ -59,8 +56,8 @@ export class TextObject extends DrawnObjectBase {
     _recalcSize(ctx) {
         //=== YOUR CODE HERE ===
         let v = this._measureText(this.text, this.font, ctx);
-        this.w = v.w + this.padding.w * 2;
-        this.h = v.h + this.padding.h * 2;
+        this._w = v.w + this.padding.w * 2;
+        this._h = v.h + this.padding.h * 2;
         // set the size configuration to be fixed at that size
         this.wConfig = SizeConfig.fixed(this.w);
         this.hConfig = SizeConfig.fixed(this.h);
