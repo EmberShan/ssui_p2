@@ -170,8 +170,6 @@ export class TopObject extends DrawnObjectBase {
     // damage instead of passing it up the tree (since there is no up from here).
     damageArea(xv, yv, wv, hv) {
         //=== YOUR CODE HERE ===
-        if (this.allowAsyncDamageRedraw)
-            console.log(this.allowAsyncDamageRedraw);
         if (!(this._damaged === true)) {
             // New child is damaged. Record the damage area for future comparison 
             this._damageRectX = xv;
@@ -184,14 +182,16 @@ export class TopObject extends DrawnObjectBase {
         else {
             // if damage is not yet resolved, the damage area might or might not need update;
             // find the furthest of the bottom right corner 
-            let cornerW = Math.max(this._damageRectX + this._damageRectW, wv + xv);
-            let cornerH = Math.max(this._damageRectY + this._damageRectH, hv + yv);
+            // let cornerW = Math.max(this._damageRectX + this._damageRectW, wv + xv); 
+            // let cornerH = Math.max(this._damageRectY + this._damageRectH, hv + yv); 
+            this._damageRectW = Math.max(this._damageRectW, wv);
+            this._damageRectH = Math.max(this._damageRectH, hv);
             // set x and y of our damage area to be the smallest 
             this._damageRectX = Math.min(this._damageRectX, xv);
             this._damageRectY = Math.min(this._damageRectY, yv);
             // calculate the w and h of the damage area 
-            this._damageRectW = cornerW - this._damageRectX + 100; // damage a little more for the image
-            this._damageRectH = cornerH - this._damageRectY + 100;
+            // this._damageRectW = cornerW - this._damageRectX + 100; // damage a little more for the image
+            // this._damageRectH = cornerH - this._damageRectY + 100; 
             // console.log(this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH)
         }
         ;

@@ -78,9 +78,8 @@ export class Row extends Group {
     // Our width is set to the width determined by stacking our children horizontally.
     _doLocalSizing() {
         //=== YOUR CODE HERE ===;
-        // first set an empty var 
-        let v = { nat: 0, min: 0, max: 0 };
         // calculate the sum of the child height configs and max of the width configs 
+        let v = { nat: 0, min: 0, max: 0 };
         for (let child of this.children) {
             v = SizeConfig.add(v, child.wConfig);
             this.hConfig = SizeConfig.maximum(this.hConfig, child.hConfig);

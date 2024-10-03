@@ -231,15 +231,15 @@
         } else {
             // if damage is not yet resolved, the damage area might or might not need update;
 
-            // find the furthest of the bottom right corner 
+            // compare coordinates of the bottom right corners 
             let cornerW = Math.max(this._damageRectX + this._damageRectW, wv + xv); 
             let cornerH = Math.max(this._damageRectY + this._damageRectH, hv + yv); 
 
-            // set x and y of our damage area to be the smallest 
+            // set x and y of our damage area to be the top right corner  
             this._damageRectX = Math.min(this._damageRectX, xv);
             this._damageRectY = Math.min(this._damageRectY, yv);
             
-            // calculate the w and h of the damage area 
+            // using the new top right corner, calculate the w and h of the damage area 
             this._damageRectW = cornerW - this._damageRectX + 100; // damage a little more for the image
             this._damageRectH = cornerH - this._damageRectY + 100; 
 
