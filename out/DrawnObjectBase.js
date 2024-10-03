@@ -595,7 +595,7 @@ export class DrawnObjectBase {
     // our parent.
     damageArea(xv, yv, wv, hv) {
         //=== YOUR CODE HERE ===
-        // if this is not the top object, then pass the damage report up the tree 
+        // if this is not the top object, then declare its damaged area 
         if (this.parent) {
             this._damageFromChild(this, this.x + xv, this.y + yv, wv, hv);
         }

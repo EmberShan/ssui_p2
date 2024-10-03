@@ -240,10 +240,9 @@
             this._damageRectY = Math.min(this._damageRectY, yv);
             
             // using the new top right corner, calculate the w and h of the damage area 
-            this._damageRectW = cornerW - this._damageRectX + 100; // damage a little more for the image
-            this._damageRectH = cornerH - this._damageRectY + 100; 
+            this._damageRectW = (cornerW - this._damageRectX) + 100; // damage a little more for the image
+            this._damageRectH = (cornerH - this._damageRectY) + 100; 
 
-            // console.log(this._damageRectX, this._damageRectY, this._damageRectW, this._damageRectH)
         }; 
         
     }
